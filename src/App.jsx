@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import ProductList from './ProductList';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 import AboutUs from './AboutUs';
 
