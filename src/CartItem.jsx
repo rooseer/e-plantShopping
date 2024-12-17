@@ -1,16 +1,14 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, updateQuantity } from './CartSlice';
-import {handlePlantsClick } from './ProductList';
+import { removeItem, updateQuantity, addItem } from './CartSlice'; // Asegúrate de importar addItem
+import ProductList from './ProductList';
 import { useNavigate } from 'react-router-dom';
-
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
 
   // Calcular el total de la cantidad de todos los productos en el carrito
   const calculateTotalAmount = () => {
@@ -27,9 +25,8 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   // Función para continuar comprando
-  const handleContinueShopping = (e) => {
-    
-    handlePlantsClick(e);
+  const handleContinueShoppingCarrito = (e) => {
+    ProductList.handlePlantsClick(e); // Se podría mejorar pasando props en lugar de llamar a esta función de ProductList
   };
 
   // Función para incrementar la cantidad de un artículo
@@ -48,6 +45,14 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Función para eliminar un artículo
   const handleRemove = (item) => {
+    dispatch(removeItem({ name: item.name }));
+  };
+
+  // Función para agregar un artículo desde el carrito
+  const handleAddItemFromCart = (item) => {
+    // Esta función agregará el artículo al inventario (o a donde se necesite)
+    dispatch(addItem(item));
+    // Opcionalmente, podrías eliminar el artículo del carrito al agregarlo al inventario:
     dispatch(removeItem({ name: item.name }));
   };
 
@@ -70,6 +75,8 @@ const CartItem = ({ onContinueShopping }) => {
                 Subtotal: ${calculateTotalCost(item)} {/* Mostrar subtotal */}
               </div>
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
+              {/* Botón para agregar el artículo desde el carrito */}
+              <button className="cart-item-add" onClick={() => handleAddItemFromCart(item)}>Add to Inventory</button>
             </div>
           </div>
         ))}
@@ -79,7 +86,7 @@ const CartItem = ({ onContinueShopping }) => {
         Total Amount: ${calculateTotalAmount()}
       </div>
       <div className="continue_shopping_btn">
-        <button className="get-started-button" onClick={handleContinueShopping}>Continue Shopping</button>
+        <button className="get-started-button" onClick={handleContinueShoppingCarrito}>Continue Shopping</button>
         <br />
         <button className="get-started-button1">Checkout</button>
       </div>
