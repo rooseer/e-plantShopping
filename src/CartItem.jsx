@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, updateQuantity, addItem } from './CartSlice'; // Asegúrate de importar addItem
-import ProductList from './ProductList';
+
 import { useNavigate } from 'react-router-dom';
 import './CartItem.css';
 
@@ -9,24 +9,23 @@ const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   // Calcular el total de la cantidad de todos los productos en el carrito
   const calculateTotalAmount = () => {
-    return cart
-      .filter(item => item.quantity > 0) // Filtra solo los artículos con cantidad mayor que 0
-      .reduce((total, item) => {
-        return total + (item.quantity * item.cost); // Suma la cantidad * el costo para cada artículo
-      }, 0);
+    return cart.reduce((total, item) => {
+        const cost = parseFloat(item.cost); // Convierte a número si no lo es
+        return total + (item.quantity * cost);
+    }, 0);
   };
 
   // Calcular el costo total de un artículo (planta) específico
   const calculateTotalCost = (item) => {
-    return item.quantity * item.cost; // Calcula el costo total del artículo
+    const cost = parseFloat(item.cost); // Convierte a número si no lo es
+    return item.quantity * cost;
   };
 
   // Función para continuar comprando
   const handleContinueShoppingCarrito = (e) => {
-    ProductList.handlePlantsClick(e); // Se podría mejorar pasando props en lugar de llamar a esta función de ProductList
+    onContinueShopping(e);
   };
 
   // Función para incrementar la cantidad de un artículo
@@ -45,7 +44,8 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Función para eliminar un artículo
   const handleRemove = (item) => {
-    dispatch(removeItem({ name: item.name }));
+    dispatch(removeItem(item.name));
+
   };
 
   // Función para agregar un artículo desde el carrito
